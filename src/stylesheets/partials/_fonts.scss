@@ -1,0 +1,38 @@
+
+@import './assets/fonts/crafty_girls/CraftyGirls.ttf';
+@import './assets/fonts/Roboto/Roboto-Regular.ttf';
+@import './assets/fonts/DoulosSIL/DoulosSIL-R.ttf';
+
+
+@font-face {
+    font-family: 'Crafty Girls';
+    src: url('./assets/fonts/crafty_girls/CraftyGirls.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('./assets/fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DoulosSIL';
+    src: url('./assets/fonts/DoulosSIL/DoulosSIL-R.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./assets/fonts/md-icon-font/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url(./assets/fonts/md-icon-font/MaterialIcons-Regular.woff2) format('woff2'),
+    url(./assets/fonts/md-icon-font/MaterialIcons-Regular.woff) format('woff'),
+    url(./assets/fonts/md-icon-font/MaterialIcons-Regular.ttf) format('truetype');
+}

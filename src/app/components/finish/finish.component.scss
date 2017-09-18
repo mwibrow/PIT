@@ -1,0 +1,9 @@
+
+@import '../../../stylesheets/partials/_colors.scss';
+@import '../../../stylesheets/partials/_variables.scss';
+
+app-finish {
+    h2 {
+        font-size: $font-size-huge;
+    }
+}

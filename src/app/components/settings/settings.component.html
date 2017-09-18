@@ -1,0 +1,95 @@
+
+
+<div md-dialog-title class="header">
+  <span class="header-title">Settings</span>
+</div>
+<div md-dialog-content>
+  <div class="main">
+
+    <div class="setting folder">
+      <div class="setting-header">
+        <span class="title">Stimuli</span>
+        <span class="horizontal-filler"></span>
+        <div class="buttons">
+          <button md-button class="secondary md-small" (click)="changeStimuliPath()">
+            <!-- <span class="tiny">Change</span> -->
+            <md-icon>folder</md-icon>
+          </button>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">All .wav files in this folder will be used for stimuli</span>
+      </div>
+      <div class="setting-value">
+        <span>{{ settings.stimuliPath }}</span>
+      </div>
+      <div class="setting-validation">
+        <span>{{ stimuliPathValidationMessage }}</span>
+      </div>
+    </div>
+    <div class="setting folder">
+      <div class="setting-header">
+        <span class="title">Responses
+        </span>
+        <span class="horizontal-filler"></span>
+        <div class="buttons">
+          <button md-button class="secondary small"  (click)="changeResponsesPath()">
+              <!-- <span class="tiny">Change</span> -->
+              <md-icon>folder</md-icon>
+          </button>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">The participant folder will be saved inside this folder</span>
+      </div>
+      <div class="setting-value">
+        <span>{{ settings.responsesPath }}</span>
+      </div>
+      <div class="setting-validation">
+        <span>{{ responsesPathValidationMessage }}</span>
+      </div>
+    </div>
+    <div class="setting number">
+      <div class="setting-header">
+        <span class="title">Block Size</span>
+        <span class="horizontal-filler"></span>
+        <div class="number-input-with-buttons">
+          <input type="number" min="1" max="100" [(ngModel)]="settings.blockSize" (change)="changeBlockSize(0)">
+          <button class="plus" (click)="changeBlockSize(1)">+</button>
+          <button class="minus" (click)="changeBlockSize(-1)">-</button>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">Number of trials in a block</span>
+      </div>
+    </div>
+
+    <div class="setting number">
+      <div class="setting-header">
+        <span class="title">Response length</span>
+        <span class="horizontal-filler"></span>
+        <div class="number-input-with-buttons">
+          <input type="number" min="1" max="10" [(ngModel)]="settings.responseLength" (change)="changeResponseLength(0)">
+          <button class="plus" (click)="changeResponseLength(1)">+</button>
+          <button class="minus" (click)="changeResponseLength(-1)">-</button>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">Time allowed for response in seconds</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div md-dialog-actions class="footer">
+  <span class="horizontal-filler"></span>
+  <div class="buttons">
+    <button md-button class="secondary" (click)="cancelSettings()">
+      Cancel
+    </button>
+    <button md-button class="primary" (click)="saveSettings()">
+      Save
+    </button>
+  </div>
+</div>
+

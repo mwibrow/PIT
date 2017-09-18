@@ -1,0 +1,39 @@
+
+@import './colors.scss';
+
+@function color($palette, $name) {
+    @return map-get($palette, $name)
+}
+
+$colors: (
+    primary: color($md-palette, md-light-blue),
+    secondary: color($md-palette, md-light-green),
+    danger: color($md-palette, md-red)
+);
+
+
+$font-main: 'Crafty Girls';
+
+$font-size-base: 1rem;
+
+$font-size-tiny: $font-size-base * 0.666;
+$font-size-small: $font-size-base * 0.75;
+$font-size-normal: $font-size-base;
+$font-size-large: $font-size-base * 2;
+$font-size-huge: $font-size-base * 3;
+
+$button-background: color($colors, primary);
+$button-primary-background: color($colors, primary);
+$button-secondary-background: color($colors, secondary);
+$button-danger-background: color($colors, danger);
+
+$button-color: color($md-palette, md-white);
+$button-primary-color: color($md-palette, md-white);
+$button-secondary-color: color($md-palette, md-white);
+$button-danger-color: color($md-palette, md-white);
+
+$dialog-background-color: rgba(color($md-palette, md-white), 0.9);
+$dialog-color: color($md-palette, md-black);
+
+$app-background: color($md-palette, md-black);
+$app-color: color($md-palette, md-white);

@@ -1,0 +1,303 @@
+
+@import '../../../stylesheets/partials/_colors.scss';
+@import '../../../stylesheets/partials/_variables.scss';
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 2s forwards;
+}
+
+.fade-out {
+  animation: fadeOut 2s forwards;
+}
+
+.page {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+}
+
+.page-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  position: relative;
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  width: 66%;
+  background-color: none;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 1ex;
+
+  h1 {
+    margin: auto;
+    font-size: 800%;
+  }
+
+  h1 span {
+     font-size: 100%;
+  }
+
+  h2 {
+    font-size: 200%;
+    color: $app-color;
+  }
+
+
+  button {
+    background-color: $button-background;
+    color: $button-color;
+    border: none;
+    font-size: 1.4rem;
+    width: 10rem;
+  }
+
+
+.danger  {
+  background-color: $button-danger-background;
+  color: $button-danger-color;
+}
+
+  md-list-item {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+  }
+}
+
+ button {
+    background-color: $button-background;
+    color: $button-color;
+    border: none;
+    font-size: 1.4rem;
+    width: 8ex;
+    margin: 0.5ex;
+  }
+
+.button-secondary {
+   background-color: $button-secondary-background !important;
+}
+
+
+
+
+  .logo span:nth-of-type(1) {
+    color: color($md-palette, 'md-red');
+  }
+
+
+  .logo span:nth-of-type(2) {
+    color: color($md-palette, 'md-light-green');
+  }
+
+  .logo span:nth-child(3) {
+    color: color($md-palette, 'md-light-blue');
+  }
+
+  .logo span:nth-child(4) {
+    color: color($md-palette, 'md-orange');
+  }
+
+  .background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+
+    div {
+      position: absolute;
+    }
+
+    .g {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    $color-sky: lighten(color($md-palette, md-light-blue), 25);
+    $color-sea: darken(color($md-palette, md-light-blue), 25);
+    $color-cloud: color($md-palette, md-light-blue);
+    $cloud-size: 24vh;
+
+    @keyframes cloud {
+      0% {
+        right: -150vw;
+      }
+      100% {
+        right: 105vw;
+      }
+    }
+
+    .cloud-container {
+       position: absolute;
+
+
+
+      .cloud {
+
+        width: 100%;
+        height: 100%;
+        //background-color: $color-cloud;
+      }
+
+      :nth-child(1) {
+         height: 25%;
+         width: 62.5%;
+         left: 15%;
+         bottom: 0%;
+
+      }
+      :nth-child(2) {
+        border-radius: 50%;
+        width: 30%;
+        height: 30%;
+        left: 0%;
+        bottom: 0%;
+      }
+
+      :nth-child(3) {
+        border-radius: 50%;
+        width: 45%;
+        height: 45%;
+        right: 0%;
+        bottom: 0%;
+      }
+
+      :nth-child(4) {
+        border-radius: 50%;
+        height: 55%;
+        width: 55%;
+        top: 35%;
+        left: 15%;
+      }
+
+    }
+
+    @for $i from 0 through 2 {
+      $size: ($i / 5 + 1) *  $cloud-size;
+
+      @keyframes cloud#{$i} {
+        0% {
+          right: -$size;
+        }
+        100% {
+          right: 100%;
+        }
+      }
+      .cloud-container#{$i} {
+
+
+        width: $size;
+        height: $size;
+        right: -$size;
+        top: ($i - 0.5) * $cloud-size / 4;
+        $duration: $i * 10 + 25s;
+        animation: cloud#{$i} $duration linear infinite;
+        animation-delay: $i * 5s;
+
+        .cloud {
+          background-color: lighten($color-cloud,  50 - $i * 10);
+        }
+      }
+    }
+
+    .sun {
+      position: absolute;
+      background-color: color($md-palette, md-yellow);
+      width: 15vh;
+      height: 15vh;
+      left: 10vh;
+      top: 10vh;
+      border-radius: 50%;
+    }
+
+    .sky {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      background-color: $color-sky ;
+    }
+
+    .sea {
+      width: 100%;
+      height: 60%;
+      left: 0;
+      bottom: 0;
+      background-color: $color-sea;
+    }
+
+    @keyframes wave {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    $animation-timing: ease-in-out;
+
+    .wave {
+      top: 0%;
+      background-color: $color-sky;
+      width: 50vh;
+      height: 50vh;
+      border-top-left-radius: 45%;
+      border-top-right-radius: 40%;
+      border-bottom-left-radius: 45%;
+      border-bottom-right-radius: 50%;
+      animation: wave $animation-timing 6s infinite;
+    }
+
+    @for $i from 1 through 10 {
+      .wave#{$i} {
+        left: percentage(0.125 * $i - 0.25);
+        animation-duration: random(4) + 6s;
+      }
+    }
+  }

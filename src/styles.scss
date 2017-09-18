@@ -1,0 +1,144 @@
+
+@import './stylesheets/partials/_colors.scss';
+@import './stylesheets/partials/_fonts.scss';
+
+
+
+@import '../src/assets/fonts/md-icon-font/material-icons.css';
+
+@import './stylesheets/partials/_variables.scss';
+@import './stylesheets/partials/_typography.scss';
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+
+  height: 100%;
+}
+
+
+* {
+  font-family: $font-main;
+  font-weight: 900;
+  font-size: 1.125rem;
+}
+
+.button-primary {
+  background-color: color($colors, primary);
+  color: color($md-palette, md-white)
+}
+
+
+.button-secondary {
+  background-color: color($colors, secondary);
+  color: color($md-palette, md-white);
+}
+
+button:focus {
+  border: none;
+  outline: 0;
+}
+
+.button-primary[disabled]  {
+  background-color: lighten(color($colors, primary), 25);
+}
+
+.button-primary[disabled]  {
+  background-color: lighten(color($colors, secondary), 25);
+}
+
+.danger  {
+  background-color: $button-danger-background;
+  color: $button-danger-color;
+}
+
+$spinner-size: 50px;
+$spinner-time: 2s;
+$spinner-border: 10px;
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg)
+  }
+}
+.loader {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  background-color: $app-background !important;
+
+  .spinner {
+    border-radius: 50%;
+    border-top: $spinner-border solid color($md-palette, md-red);
+    border-left: $spinner-border solid color($md-palette, md-orange);
+    border-right: $spinner-border solid color($md-palette, md-light-green);
+    border-bottom: $spinner-border solid color($md-palette, md-light-blue);
+    width: $spinner-size !important;
+    height: $spinner-size !important;
+    margin: $spinner-size / 4;
+    animation: spin $spinner-time linear infinite;
+  }
+}
+
+
+.mat-dialog-container, .md-dialog-container {
+    background: $dialog-background-color;
+    color: $dialog-color;
+    box-shadow: 0 0 1rem 1rem rgba(color($md-palette, md-black), 0.125) !important;
+    h2 {
+      font-family: $font-main;
+      font-size: $font-size-large;
+      font-weight: bold;
+    }
+    div[md-dialog-actions] {
+      .hfill {
+          flex: 1 1;
+      }
+      button {
+        background-color: color($colors, primary);
+        color: $dialog-color;
+      }
+      .ok {
+        background-color: color($colors, danger);
+      }
+      .cancel {
+        background-color: color($colors, secondary);
+      }
+    }
+    border-radius: 2rem !important;
+    border-top: $spinner-border solid color($md-palette, md-red);
+    border-left: $spinner-border solid color($md-palette, md-orange);
+    border-right: $spinner-border solid color($md-palette, md-light-green);
+    border-bottom: $spinner-border solid color($md-palette, md-light-blue);
+}
+
+// .cdk-overlay-dark-backdrop {
+//   // background: none !important;
+// }
+
+.multi-color {
+
+  i:nth-child(1) {
+    color: color($md-palette, md-red);
+  }
+  i:nth-child(2) {
+    color: color($md-palette, md-light-green);
+  }
+  i:nth-child(3) {
+    color: color($md-palette, md-light-blue);
+  }
+  i:nth-child(4) {
+    color: color($md-palette, md-light-blue);
+  }
+}
+

@@ -1,0 +1,287 @@
+
+@import '../../../stylesheets/partials/_colors.scss';
+@import '../../../stylesheets/partials/_variables.scss';
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 1s;
+}
+
+.fade-out {
+  animation: fadeOut 1s;
+}
+
+
+.main {
+  width: 50vw !important;
+  min-width: 20em;
+  max-width: 30em;
+  // height: 100%;
+  // width: 75vh !important;
+  // margin: 0ex;
+  // // flex: 1 1;
+  //  overflow-y: scroll;
+  //  overflow-x: hidden;
+
+  // div {
+  //   overflow: hidden
+  // }
+}
+
+.header {
+  width: 100%;
+  //background-color: color($md-palette, md-light-blue);
+  //color: color($md-palette, md-white);
+  text-align: left;
+  margin-bottom: 1ex;
+  .header-title {
+    font-size: $font-size-large;
+    padding-left: 0ex;
+    padding-top: 0.5ex;
+    padding-bottom: 1ex;
+  }
+}
+
+.footer {
+  display: flex;
+  padding: 1ex;
+  button {
+  border: none;
+  outline: 0px;
+  min-width: 15ex;
+  border-radius: 2.5px;
+}
+
+}
+
+.setting {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1ex;
+
+  .title {
+
+  }
+
+  .setting-description {
+    text-align: left;
+  }
+
+  .description {
+    opacity: 0.8;
+    font-size: $font-size-tiny;
+  }
+
+}
+
+.folder {
+
+  .md-button, .mat-button {
+    min-width: 1% !important;
+
+  }
+  .tiny {
+    font-size: $font-size-tiny !important;
+  }
+
+  .setting-value {
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px dotted rgba($dialog-color, 0.5);
+    span {
+      color: rgba($dialog-color, 0.5);
+      font-size: $font-size-small;
+    }
+    input {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      color: rgba($dialog-color, 0.5);
+    }
+  }
+}
+
+
+.number {
+  .number-input-with-buttons {
+    display: inline-block;
+    position: relative;
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted rgba($dialog-color, 0.5);
+      outline: none;
+      margin-right: 1em;
+      width: 3em;
+      color:$dialog-color;
+    }
+
+    button {
+      position: absolute;
+      margin: 0px !important;
+      padding: 0px !important;
+      font-size: $font-size-normal;
+      width: 0.875em !important;
+      height: 0.85em !important;
+      line-height: 0.25em;
+      background-color: color($md-palette, md-orange);
+      display:flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button:hover {
+      background-color: darken(color($md-palette, md-orange), 10);
+    }
+    .plus {
+      top: 0;
+      right: 0;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .minus {
+      bottom: 0;
+      right: 0;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+}
+
+button {
+  border: none;
+  outline: 0px;
+  border-radius: 2.5px;
+}
+
+
+.text {
+
+  input[type="text"] {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dotted rgba($dialog-color, 0.5);
+    outline: none;
+    margin-right: 1em;
+    color: $dialog-color;
+  }
+}
+
+
+.setting-header {
+  width: 100%;
+  display: flex;
+
+  .buttons {
+    position: absolute;
+    right: 0;
+  }
+}
+
+
+
+.buttons {
+  display: inline-block;
+  padding-bottom: 1.5rem;
+}
+
+
+
+
+
+.primary {
+  background-color: $button-primary-background;
+  color: $button-primary-color;
+}
+
+
+.primary[disabled] {
+  background-color: lighten($button-primary-background, 25);
+  color: $button-primary-color;
+}
+
+.secondary {
+  background-color: $button-secondary-background;
+  color: $button-secondary-color;
+}
+
+.horizontal-filler {
+   flex: 1 1 auto;
+}
+
+::-webkit-scrollbar
+{
+  width: 12px;  /* for vertical scrollbars */
+  height: 12px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track
+{
+  background: $dialog-background-color;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(127,127,127, 1);
+  border-radius: 6px;
+}
+
+.setting-validation {
+  text-align: left;
+  color: color($colors, danger);
+  span {
+    font-size: $font-size-tiny !important;
+  }
+}
+
+// .mat-dialog-container
+// .md-dialog-container
+
+
+
+.md-dialog-content {
+  max-width:75%;
+}
+
+.md-button.md-small {
+    width: 1px !important;
+    min-width: 1% !important;
+    font-size: 1px !important;
+  }
+
+.footer {
+  button {
+    color: color($md-palette, md-white);
+  }
+
+  .secondary {
+    background-color: color($md-palette, md-light-green);
+  }
+}

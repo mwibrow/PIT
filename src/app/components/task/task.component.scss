@@ -1,0 +1,154 @@
+
+
+@import '../../../stylesheets/partials/_colors.scss';
+@import '../../../stylesheets/partials/_variables.scss';
+
+
+.page {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+
+
+$color-list:(
+    red,
+    green,
+    pink,
+    orange,
+    light-green,
+    purple,
+    yellow,
+    deep-purple,
+    cyan,
+    indigo,
+    deep-orange,
+    blue,
+    lime,
+    light-blue,
+    brown,
+    teal
+);
+
+@for $i from 1 through length($color-list) {
+    $c: nth($color-list, $i);
+    .color-#{$i} {
+        background-color: color($md-palette, md-#{$c});
+    }
+    .color-light-#{$i} {
+        background-color: lighten(color($md-palette, md-#{$c}), 5);
+    }
+    .color-dark-#{$i} {
+        background-color: darken(color($md-palette, md-#{$c}), 5);
+    }
+}
+
+
+
+.color-0 {
+    background-color: color($md-palette, md-black);
+}
+
+
+.tiles {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    background: color($md-palette, md-black);
+    perspective: 1000px;
+}
+
+.tile {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+@keyframes out-right {
+   from { }
+   to { transform: translateX(100%) rotateY(90deg) scale(0.1); opacity: 0;}
+}
+
+@keyframes out-left {
+    from { }
+    to { transform: translateX(-100%) rotateY(90deg) scale(0.1); opacity: 0;}
+}
+
+@keyframes in-right {
+    from { transform: translateX(100%) rotateY(90deg)  scale(0.1); opacity: 0;}
+    to { }
+}
+@keyframes in-left {
+    from { transform: translateX(-100%) rotateY(90deg) scale(0.1); opacity: 0;}
+    to { }
+}
+
+
+@keyframes out-bottom {
+    from { }
+    to { transform: translateY(100%) rotateX(90deg) scale(0.1); opacity: 0;}
+ }
+
+ @keyframes out-top {
+     from { }
+     to { transform: translateY(-100%) rotateX(90deg) scale(0.1); opacity: 0;}
+ }
+
+ @keyframes in-bottom {
+     from { transform: translateY(100%) rotateX(90deg)  scale(0.1); opacity: 0;}
+     to { }
+ }
+ @keyframes in-top {
+     from { transform: translateY(-100%) rotateX(90deg) scale(0.1); opacity: 0;}
+     to { }
+ }
+
+$animation-duration: 2s;
+
+@each $d in (left, right, top, bottom) {
+    .in-#{$d} {
+        animation: in-#{$d} $animation-duration forwards;
+    }
+    .out-#{$d} {
+        animation: out-#{$d} $animation-duration forwards;
+    }
+}
+
+
+.tile-front {
+    z-index: 10;
+}
+
+.tile-back {
+   z-index: 5
+}
+
+.image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: color($md-palette, md-black);
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+img {
+    width: 512px;
+    height: 512px;
+}
+
+img[src=""] {
+    display: none;
+ }
