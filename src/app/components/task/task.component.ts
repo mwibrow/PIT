@@ -31,9 +31,8 @@ class Tile {
     public stack: string,
     public direction: string,
     public style: string,
-    public imageSrc: string) {};
+    public imageSrc: Array<String>) {};
 }
-
 
 
 @Component({
@@ -69,7 +68,6 @@ export class TaskComponent implements OnInit {
   private incomingTileIndex: number;
   private savedTileColor: number;
 
-  private imageSrc: string;
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -98,7 +96,6 @@ export class TaskComponent implements OnInit {
     this.incomingTileIndex = 0;
     this.savedTileColor = null;
 
-    this.imageSrc = null;
   }
 
 
@@ -207,7 +204,7 @@ export class TaskComponent implements OnInit {
     }
   }
 
-  private updateTiles(imageSrc?: string) {
+  private updateTiles(imageSrc?: Array<string>) {
     let newColor: number;
     let i = this.trial % this.stimuli.length;
     let outgoingTileIndex: number = this.incomingTileIndex;
