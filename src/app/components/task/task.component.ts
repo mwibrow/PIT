@@ -101,8 +101,8 @@ export class TaskComponent implements OnInit {
 
   private loadStimuli() {
     return new Promise((resolve, reject) => {
-      console.log(`Loading wav files from ${this.settings.stimuliPath}`);
-      this.stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
+      console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
+      this.stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
       if (this.stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {

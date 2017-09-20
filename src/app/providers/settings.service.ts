@@ -6,13 +6,15 @@ const klawSync = require('klaw-sync')
 const path = require('path');
 
 const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
+const filterWav = item => /[.](wav)/.test(path.extname(item.path))
 
 export const notSet: string = 'Not set!';
 
 export class Settings {
 
     participantId: string = notSet;
-    stimuliPath: string = notSet;
+    stimuliPathAudio: string = notSet;
+    stimuliPathImage: string = notSet;
     responsesPath: string = notSet;
 
     blockSize: number = 10;
@@ -66,18 +68,31 @@ export class SettingsService {
 
 
   validateSettings() {
-
       return new Promise((resolve, reject) => {
-        if (!this.settings.stimuliPath || this.settings.responsesPath === notSet) {
-          reject('Stimuli folder not set');
+        let stimuli: any;
+        // Check audio folder
+        if (!this.settings.stimuliPathAudio || this.settings.stimuliPathAudio === notSet) {
+          reject('Audio stimuli folder not set');
         }
-        if (!fs.pathExistsSync(this.settings.stimuliPath)) {
-          reject('Stimuli folder does not exist')
+        if (!fs.pathExistsSync(this.settings.stimuliPathAudio)) {
+          reject('Audio stimuli folder does not exist')
         }
-        let stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
+        stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
         if (stimuli.length === 0) {
-          reject('No image files in stimuli folder');
+          reject('No Wav files in audio stimuli folder');
         }
+        // Check image folder
+        if (!this.settings.stimuliPathImage || this.settings.stimuliPathImage === notSet) {
+          reject('Image stimuli folder not set');
+        }
+        if (!fs.pathExistsSync(this.settings.stimuliPathImage)) {
+          reject('Image stimuli folder does not exist')
+        }
+        stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+        if (stimuli.length === 0) {
+          reject('No Image files in stimuli folder');
+        }
+        // Check respones folder
         if (!this.settings.responsesPath || this.settings.responsesPath === notSet) {
           reject('Responses folder not set');
         }

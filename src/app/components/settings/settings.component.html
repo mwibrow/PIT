@@ -8,10 +8,10 @@
 
     <div class="setting folder">
       <div class="setting-header">
-        <span class="title">Stimuli</span>
+        <span class="title">Audio stimuli</span>
         <span class="horizontal-filler"></span>
         <div class="buttons">
-          <button md-button class="secondary md-small" (click)="changeStimuliPath()">
+          <button md-button class="secondary md-small" (click)="changeStimuliPathAudio()">
             <!-- <span class="tiny">Change</span> -->
             <md-icon>folder</md-icon>
           </button>
@@ -21,12 +21,35 @@
         <span class="description">All .wav files in this folder will be used for stimuli</span>
       </div>
       <div class="setting-value">
-        <span>{{ settings.stimuliPath }}</span>
+        <span>{{ settings.stimuliPathAudio }}</span>
       </div>
       <div class="setting-validation">
-        <span>{{ stimuliPathValidationMessage }}</span>
+        <span>{{ stimuliPathAudioValidationMessage }}</span>
       </div>
     </div>
+
+    <div class="setting folder">
+      <div class="setting-header">
+        <span class="title">Image stimuli</span>
+        <span class="horizontal-filler"></span>
+        <div class="buttons">
+          <button md-button class="secondary md-small" (click)="changeStimuliPathImage()">
+            <!-- <span class="tiny">Change</span> -->
+            <md-icon>folder</md-icon>
+          </button>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">All image files in this folder will be used for stimuli</span>
+      </div>
+      <div class="setting-value">
+        <span>{{ settings.stimuliPathImage }}</span>
+      </div>
+      <div class="setting-validation">
+        <span>{{ stimuliPathImageValidationMessage }}</span>
+      </div>
+    </div>
+
     <div class="setting folder">
       <div class="setting-header">
         <span class="title">Responses

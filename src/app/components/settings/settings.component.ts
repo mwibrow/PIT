@@ -20,7 +20,8 @@ const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
 export class SettingsComponent implements OnInit {
 
   public settings: Settings;
-  public stimuliPathValidationMessage: string ='';
+  public stimuliPathAudioValidationMessage: string ='';
+  public stimuliPathImageValidationMessage: string ='';
   public responsesPathValidationMessage: string ='';
 
   constructor(
@@ -35,14 +36,26 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
   }
 
-  changeStimuliPath() {
+  changeStimuliPathAudio() {
     let path: any = dialog.showOpenDialog({
       properties: ['openDirectory'],
-      defaultPath: this.settings.stimuliPath
+      defaultPath: this.settings.stimuliPathAudio
     });
     if (path && path.length === 1) {
-      this.settings.stimuliPath = path[0];
-      this.validateStimuliPath();
+      this.settings.stimuliPathAudio = path[0];
+      this.validateStimuliPathAudio();
+
+    }
+  }
+
+  changeStimuliPathImage() {
+    let path: any = dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      defaultPath: this.settings.stimuliPathImage
+    });
+    if (path && path.length === 1) {
+      this.settings.stimuliPathImage = path[0];
+      this.validateStimuliPathImage();
 
     }
   }
@@ -78,9 +91,10 @@ export class SettingsComponent implements OnInit {
   }
 
   validateSettings() {
-    this.validateStimuliPath();
+    this.validateStimuliPathAudio();
+    this.validateStimuliPathImage();
     this.validateResponsesPath();
-    return this.responsesPathValidationMessage === '' && this.stimuliPathValidationMessage === '';
+    return this.responsesPathValidationMessage === '' && this.stimuliPathAudioValidationMessage === '' && this.stimuliPathImageValidationMessage === '';
   }
 
   changeBlockSize(by: number) {
@@ -99,22 +113,38 @@ export class SettingsComponent implements OnInit {
     if (this.settings.responseLength > 10) this.settings.responseLength = 10;
   }
 
-
-  validateStimuliPath() {
-    if (!this.settings.stimuliPath || this.settings.stimuliPath == notSet) {
-      this.stimuliPathValidationMessage = 'Stimuli folder not set';
+  validateStimuliPathAudio() {
+    if (!this.settings.stimuliPathAudio || this.settings.stimuliPathAudio === notSet) {
+      this.stimuliPathAudioValidationMessage = 'Audio stimuli folder not set';
       return;
     }
-    if (!fs.pathExistsSync(this.settings.stimuliPath)) {
-      this.stimuliPathValidationMessage = 'Stimuli folder does not exist';
+    if (!fs.pathExistsSync(this.settings.stimuliPathAudio)) {
+      this.stimuliPathAudioValidationMessage = 'Audio stimuli folder does not exist';
       return;
     }
-    let stimuli = klawSync(this.settings.stimuliPath, { filter: filterImg });
+    let stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterImg });
     if (stimuli.length === 0) {
-      this.stimuliPathValidationMessage = 'No Images files in stimuli folder';
+      this.stimuliPathAudioValidationMessage = 'No WAV files in audio stimuli folder';
       return;
     }
-    this.stimuliPathValidationMessage = '';
+    this.stimuliPathAudioValidationMessage = '';
+  }
+
+  validateStimuliPathImage() {
+    if (!this.settings.stimuliPathImage || this.settings.stimuliPathImage === notSet) {
+      this.stimuliPathImageValidationMessage = 'Image stimuli folder not set';
+      return;
+    }
+    if (!fs.pathExistsSync(this.settings.stimuliPathImage)) {
+      this.stimuliPathImageValidationMessage = 'Image stimuli folder does not exist';
+      return;
+    }
+    let stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+    if (stimuli.length === 0) {
+      this.stimuliPathImageValidationMessage = 'No image files in stimuli folder';
+      return;
+    }
+    this.stimuliPathImageValidationMessage = '';
   }
 
   validateResponsesPath() {

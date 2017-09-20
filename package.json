@@ -35,7 +35,7 @@
     "e2e": "protractor ./protractor.conf.js"
   },
   "dependencies": {
-    "@angular/animations": "^4.3.5",
+    "@angular/animations": "4.3.5",
     "@angular/cdk": "^2.0.0-beta.8",
     "@angular/common": "4.3.5",
     "@angular/compiler": "4.3.5",
@@ -46,6 +46,7 @@
     "@angular/platform-browser": "4.3.5",
     "@angular/platform-browser-dynamic": "4.3.5",
     "@angular/router": "4.3.5",
+    "@ngtools/webpack": "1.7.1",
     "core-js": "2.4.1",
     "electron-json-storage": "^3.0.7",
     "enhanced-resolve": "3.3.0",
@@ -53,6 +54,7 @@
     "fs-extra": "^4.0.0",
     "inline-worker": "^1.1.0",
     "klaw-sync": "^2.1.0",
+    "log": "^1.4.0",
     "node-sass": "^4.5.3",
     "rxjs": "^5.4.2",
     "sprintf-js": "^1.1.1",
