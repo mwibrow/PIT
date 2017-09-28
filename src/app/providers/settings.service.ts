@@ -16,11 +16,9 @@ export class Settings {
     stimuliPathAudio: string = notSet;
     stimuliPathImage: string = notSet;
     responsesPath: string = notSet;
-
     blockSize: number = 10;
-
-
-    responseLength: number = 5;
+    responseLength: number = 60;
+    repetitions: number = 3;
 
 }
 

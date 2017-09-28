@@ -18,6 +18,7 @@ import { BreakComponent } from '../break/break.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
 
 const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
+const filterWav = item => /[.]wav/.test(path.extname(item.path))
 
 const COLOR_COUNT: number = 16;
 const DIRECTIONS: Array<string> =  ['top', 'bottom', 'left', 'right'];
@@ -48,6 +49,10 @@ export class TaskComponent implements OnInit {
 
   private settings: Settings;
   private stimuli: Array<any>;
+
+  private audioStimuli: any;
+  private imageStimuli: any;
+
   private trial: number;
   private participantFolder: string;
   private now: Date;
@@ -82,6 +87,8 @@ export class TaskComponent implements OnInit {
 
 
     this.stimuli = new Array<any>();
+    this.audioStimuli = {};
+    this.imageStimuli = {};
     this.settings = settingsService.settings;
 
     this.trial = 0;
@@ -98,25 +105,63 @@ export class TaskComponent implements OnInit {
 
   }
 
-
   private loadStimuli() {
     return new Promise((resolve, reject) => {
-      console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
-      this.stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
-      if (this.stimuli.length === 0) {
+      this.loadAudioStimuli().then(() => this.loadImageStimuli()).then(() => resolve())
+    });
+  }
+
+  private loadAudioStimuli() {
+    return new Promise((resolve, reject) => {
+      console.log(`Loading wav files from ${this.settings.stimuliPathAudio}`);
+      let stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
+      if (stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
             title: 'Ooops!',
-            content: 'There were no image files in the stimuli folder'
+            content: 'There were no WAV files in the audio stimuli folder'
           }
         },
         () => {
             this.router.navigateByUrl('');
           });
       }
-      console.log(`Loaded ${this.stimuli.length} paths.`);
+      console.log(`Loaded ${stimuli.length} audio paths.`);
+      this.audioStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
+      this.stimuli = Object.keys(this.audioStimuli);
+      if (this.settings.repetitions > 1) {
+        this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.audioStimuli));
+      }
+      console.log(`Total audio stimuli (including repetitions): ${this.stimuli.length}`)
       resolve();
     });
+  }
+
+  private loadImageStimuli() {
+    return new Promise((resolve, reject) => {
+      console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
+      let stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+      if (this.imageStimuli.length === 0) {
+        this.openDialog('error', ErrorComponent, {
+          data: {
+            title: 'Ooops!',
+            content: 'There were no image files in the image stimuli folder'
+          }
+        },
+        () => {
+            this.router.navigateByUrl('');
+          });
+      }
+      console.log(`Loaded ${this.stimuli.length} images paths.`);
+      this.imageStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
+      resolve();
+    });
+  }
+
+  private getBase(path): string {
+    let isWindows: boolean = path.sep === '//';
+    let pathApi = isWindows ? path.win32 : path;
+    return pathApi.basename(path, pathApi.extname(path))
   }
 
   private runTask() {
@@ -134,6 +179,7 @@ export class TaskComponent implements OnInit {
     this.taskRunning = true;
     this.runTrial();
   }
+
 
   private runTrial() {
     this.startTrial()
