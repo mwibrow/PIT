@@ -164,6 +164,10 @@ export class TaskComponent implements OnInit {
     return pathApi.basename(path, pathApi.extname(path))
   }
 
+  private getDistractors(target: string): Array<string> {
+    return _.sampleSize(_.filter(this.stimuli, (stimulus) => stimulus !== target), 2);
+  }
+
   private runTask() {
     let now = new Date();
     this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d',
