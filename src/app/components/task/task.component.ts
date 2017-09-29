@@ -8,6 +8,7 @@ const sprintf = require ('sprintf-js');
 const storage = require('electron-json-storage');
 const fs = require('fs-extra');
 const klawSync = require('klaw-sync')
+const log = require('log')
 const path = require('path');
 var _ = require('lodash');
 
@@ -32,9 +33,9 @@ class Tile {
     public stack: string,
     public direction: string,
     public style: string,
-    public imageSrc: Array<String>) {};
-}
+    public imageSrc: Array<String>) { };
 
+}
 
 @Component({
   selector: 'app-task',
@@ -56,6 +57,7 @@ export class TaskComponent implements OnInit {
   private trial: number;
   private participantFolder: string;
   private now: Date;
+  private target: string;
 
   private recorder: AudioRecorder;
 
@@ -73,6 +75,7 @@ export class TaskComponent implements OnInit {
   private incomingTileIndex: number;
   private savedTileColor: number;
 
+  private log;
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -102,6 +105,7 @@ export class TaskComponent implements OnInit {
     this.tiles.push(new Tile(0, 'front', 'left', 'in', null));
     this.incomingTileIndex = 0;
     this.savedTileColor = null;
+    this.log = null;
 
   }
 
@@ -177,6 +181,8 @@ export class TaskComponent implements OnInit {
       (err) => {
         console.error(`Could not create folder '${participantPath}'`)
       });
+    this.log = fs.createWriteStream(path.join(participantPath, 'results.txt'))
+    this.log.writeRow('trial', 'image1', 'image2', 'image3', 'target', 'response')
     this.stimuli = _.shuffle(this.stimuli);
     this.finish = false;
     this.abort = false;
@@ -184,10 +190,20 @@ export class TaskComponent implements OnInit {
     this.runTrial();
   }
 
+  private writeRow(trial, images, target, response) {
+    let row = sprintf.sprintf('%10s %10s %10s %10s %10s %10s\n',
+      (trial).toString(), images[0], images[1], images[2], target, response)
+  }
+
+  private cleanUp() {
+    if (this.log) {
+      this.log.close();
+    }
+  }
 
   private runTrial() {
     this.startTrial()
-      .then(() => this.loadStimulus())
+      .then(() => this.loadStimuli())
       .then(() => this.recordResponse())
       .then(() => this.saveResponse())
       .then(() => this.endTrial());
@@ -196,20 +212,23 @@ export class TaskComponent implements OnInit {
   private startTrial() {
     this.trialRunning = true;
     return new Promise((resolve, reject) => {
-      this.recorder.record();
+    
+
       resolve();
     });
   }
 
-  private loadStimulus()  {
+  private setUpTrial() {
     let i: number;
     return new Promise((resolve, reject) => {
       i = this.trial % this.stimuli.length;
-      this.updateTiles(this.stimuli[i].path);
+      this.target = this.stimuli[i]
+      let imageStimuli = _.shuffle(_.sampleSize(
+          this.imageStimuli.filter(image => image !== this.target), 2).concat([this.target]))
+      this.updateTiles(imageStimuli.map(image => this.imageStimuli[image]))
       setTimeout(() => resolve(), 2000);
     });
   }
-
 
   private recordResponse()  {
     return new Promise((resolve, reject) => {
@@ -260,21 +279,18 @@ export class TaskComponent implements OnInit {
     let outgoingTileIndex: number = this.incomingTileIndex;
     this.incomingTileIndex = 1 - this.incomingTileIndex;
 
-    if (imageSrc) {
-      newColor = this.savedTileColor ? this.savedTileColor : this.tiles[outgoingTileIndex].color;
-      this.tiles[this.incomingTileIndex].color = (newColor % COLOR_COUNT) + 1;
-      this.savedTileColor = null;
-    } else {
-      this.savedTileColor = this.tiles[outgoingTileIndex].color;
-      this.tiles[this.incomingTileIndex].color = 0
-    }
-    this.tiles[this.incomingTileIndex].imageSrc = imageSrc;
-    console.log(imageSrc)
-    this.tiles[this.incomingTileIndex].style = STYLE_IN;
-    this.tiles[outgoingTileIndex].style = STYLE_OUT;
+    let inTile = this.tiles[this.incomingTileIndex]
+    let outTile = this.tiles[1 - this.incomingTileIndex]
     let directions = _.sampleSize(DIRECTIONS, 2);
-    this.tiles[this.incomingTileIndex].direction = directions[0];
-    this.tiles[outgoingTileIndex].direction = directions[1];
+
+    inTile.imageSrc = imageSrc
+    inTile.color = _.sample(_.range(COLOR_COUNT).filter(count => count = outTile.color))
+    inTile.style = STYLE_IN
+    inTile.direction = directions[0]
+
+    outTile.style = STYLE_OUT
+    outTile.direction = directions[1]
+  
     setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
   }
 
