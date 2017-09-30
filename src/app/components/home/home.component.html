@@ -2,11 +2,14 @@
   <div class="page-wrapper {{fade}}">
     <div class="container">
       <div class="content">
-        <h1 class="title">
+        <div class="title">
           <span class="logo">
             <span>P</span><span>I</span><span>T</span>
           </span>
-        </h1>
+        </div>
+        <div class="image-wrapper">
+        <img [src]="logoSrc">
+        </div>
         <h2>
           Picture Identification Task
         </h2>
@@ -18,7 +21,7 @@
             </button>
           </md-list-item>
           <md-list-item>
-            <button md-button (click)="startTask()">
+            <button md-button class="button-secondary" (click)="startTask()">
               Start
             </button>
           </md-list-item>

@@ -152,3 +152,14 @@ img {
 img[src=""] {
     display: none;
  }
+
+.tile-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        width: calc(33% - 5rem);
+    }
+}

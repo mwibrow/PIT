@@ -18,7 +18,7 @@ import { ReadyComponent } from '../ready/ready.component';
 import { BreakComponent } from '../break/break.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
 
-const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
+const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
 const filterWav = item => /[.]wav/.test(path.extname(item.path))
 
 const COLOR_COUNT: number = 16;
@@ -33,7 +33,9 @@ class Tile {
     public stack: string,
     public direction: string,
     public style: string,
-    public imageSrc: Array<String>) { };
+    public imageSrc: Array<String>,
+    public active: boolean=false) { };
+
 
 }
 
@@ -59,7 +61,7 @@ export class TaskComponent implements OnInit {
   private now: Date;
   private target: string;
 
-  private recorder: AudioRecorder;
+  private player: AudioPlayer;
 
   private keyboardBuffer: Array<string>;
 
@@ -83,8 +85,8 @@ export class TaskComponent implements OnInit {
       public settingsService: SettingsService) {
 
     this.audio.initialise();
-    this.recorder = audio.recorder;
-    this.recorder.initialise();
+    this.player = audio.player;
+    this.player.initialise();
 
     this.keyboardBuffer = [];
 
@@ -131,10 +133,10 @@ export class TaskComponent implements OnInit {
           });
       }
       console.log(`Loaded ${stimuli.length} audio paths.`);
-      this.audioStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
+      this.audioStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus.path)]: stimulus.path}), {})
       this.stimuli = Object.keys(this.audioStimuli);
       if (this.settings.repetitions > 1) {
-        this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.audioStimuli));
+        this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.stimuli));
       }
       console.log(`Total audio stimuli (including repetitions): ${this.stimuli.length}`)
       resolve();
@@ -145,7 +147,7 @@ export class TaskComponent implements OnInit {
     return new Promise((resolve, reject) => {
       console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
       let stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
-      if (this.imageStimuli.length === 0) {
+      if (stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
             title: 'Ooops!',
@@ -156,16 +158,16 @@ export class TaskComponent implements OnInit {
             this.router.navigateByUrl('');
           });
       }
-      console.log(`Loaded ${this.stimuli.length} images paths.`);
-      this.imageStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
+      console.log(`Loaded ${stimuli.length} image paths.`);
+      this.imageStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus.path)]: stimulus.path}), {})
       resolve();
     });
   }
 
-  private getBase(path): string {
+  private getBase(filePath): string {
     let isWindows: boolean = path.sep === '//';
     let pathApi = isWindows ? path.win32 : path;
-    return pathApi.basename(path, pathApi.extname(path))
+    return pathApi.basename(filePath, path.extname(filePath))
   }
 
   private getDistractors(target: string): Array<string> {
@@ -174,15 +176,15 @@ export class TaskComponent implements OnInit {
 
   private runTask() {
     let now = new Date();
-    this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d',
-      now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes());
+    this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d%02d',
+      now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
     let participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
     fs.mkdirpSync(participantPath,
       (err) => {
         console.error(`Could not create folder '${participantPath}'`)
       });
     this.log = fs.createWriteStream(path.join(participantPath, 'results.txt'))
-    this.log.writeRow('trial', 'image1', 'image2', 'image3', 'target', 'response')
+    this.writeRow('trial', ['image1', 'image2', 'image3'], 'target', 'response')
     this.stimuli = _.shuffle(this.stimuli);
     this.finish = false;
     this.abort = false;
@@ -193,6 +195,7 @@ export class TaskComponent implements OnInit {
   private writeRow(trial, images, target, response) {
     let row = sprintf.sprintf('%10s %10s %10s %10s %10s %10s\n',
       (trial).toString(), images[0], images[1], images[2], target, response)
+    this.log.write(row)
   }
 
   private cleanUp() {
@@ -203,16 +206,13 @@ export class TaskComponent implements OnInit {
 
   private runTrial() {
     this.startTrial()
-      .then(() => this.loadStimuli())
-      .then(() => this.recordResponse())
-      .then(() => this.saveResponse())
-      .then(() => this.endTrial());
+      .then(() => this.setUpTrial())
   }
 
   private startTrial() {
     this.trialRunning = true;
     return new Promise((resolve, reject) => {
-    
+
 
       resolve();
     });
@@ -224,7 +224,7 @@ export class TaskComponent implements OnInit {
       i = this.trial % this.stimuli.length;
       this.target = this.stimuli[i]
       let imageStimuli = _.shuffle(_.sampleSize(
-          this.imageStimuli.filter(image => image !== this.target), 2).concat([this.target]))
+          Object.keys(this.imageStimuli).filter(image => image !== this.target), 2).concat([this.target]))
       this.updateTiles(imageStimuli.map(image => this.imageStimuli[image]))
       setTimeout(() => resolve(), 2000);
     });
@@ -238,11 +238,7 @@ export class TaskComponent implements OnInit {
 
   private saveResponse() {
     return new Promise((resolve, reject) => {
-      this.recorder.stop().then(() => {
-        let wavPath: string = this.getResponseFile();
-        console.log(`Saving wav to ${wavPath}`);
-        this.recorder.saveWav(wavPath).then(() => resolve());
-      });
+
     });
   }
 
@@ -274,24 +270,46 @@ export class TaskComponent implements OnInit {
   }
 
   private updateTiles(imageSrc?: Array<string>) {
+    console.log(imageSrc)
     let newColor: number;
     let i = this.trial % this.stimuli.length;
     let outgoingTileIndex: number = this.incomingTileIndex;
     this.incomingTileIndex = 1 - this.incomingTileIndex;
 
-    let inTile = this.tiles[this.incomingTileIndex]
-    let outTile = this.tiles[1 - this.incomingTileIndex]
+    let inTile = this.tiles[this.incomingTileIndex];
+    let outTile = this.tiles[1 - this.incomingTileIndex];
     let directions = _.sampleSize(DIRECTIONS, 2);
 
-    inTile.imageSrc = imageSrc
-    inTile.color = _.sample(_.range(COLOR_COUNT).filter(count => count = outTile.color))
-    inTile.style = STYLE_IN
-    inTile.direction = directions[0]
 
-    outTile.style = STYLE_OUT
-    outTile.direction = directions[1]
-  
-    setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000)
+    inTile.imageSrc = imageSrc;
+    inTile.color = _.sample(_.range(COLOR_COUNT).filter(count => count = outTile.color));
+    inTile.style = STYLE_IN;
+    inTile.direction = directions[0];
+
+    outTile.style = STYLE_OUT;
+    outTile.direction = directions[1];
+    inTile.active = true;
+    setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000);
+  }
+
+  private loadImageSrc(imageSrc: Array<string>) {
+    return this._loadImageSrc(imageSrc, []);
+  }
+
+  private _loadImageSrc(imageSrc: Array<string>, imageBuf: Array<string>) {
+    if (imageSrc.length === 0) {
+
+    }
+    return new Promise((resolve, reject) => {
+
+      fs.readFile(imageSrc, (err, buffer) => {
+
+      })
+    });
+  }
+
+  public getImageSrc(imageSrc:string) {
+    return `data:image/png;base64,${imageSrc}`
   }
 
   private endTask() {

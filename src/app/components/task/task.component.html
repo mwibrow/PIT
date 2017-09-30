@@ -1,14 +1,13 @@
 
 <div class="page">
     <div class="tiles">
-        <div *ngFor="let tile of tiles; let i = index" *ngIf="tile.active" class="tile tile={{tile.stack}} color-light-{{tile.color}} {{tile.style}}-{{tile-color}}">
-            <div class="tile-inner">
-                <div *ngFor="let imageSrc of tile.images">
-                    <img [src]="getImage(imageSrc)"/>
+        <div *ngFor="let tile of tiles">
+            <div *ngIf="tile.active" class="tile tile={{tile.stack}} color-light-{{tile.color}} {{tile.style}}-{{tile.direction}}">
+                <div  class="tile-inner">
+                    <div *ngFor="let imageSrc of tile.imageSrc">
+                        <img [src]="getImageSrc(imageSrc)"/>
+                    </div>
                 </div>
-            </div>
-            <div class="visualiser">
-                <div class="bar" [ngStyle]="tiles.visualiserStyle"></div>
             </div>
         </div>
     </div>

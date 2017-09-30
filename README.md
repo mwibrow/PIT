@@ -1,4 +1,4 @@
-# PIT 🕳
+# PIT
 
 **PIT** is an [Electron](https://electron.atom.io/)
 app for performing picture identification experiments.

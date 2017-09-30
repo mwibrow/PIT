@@ -10,7 +10,8 @@ const fs = require('fs-extra');
 const klawSync = require('klaw-sync')
 const path = require('path');
 
-const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
+const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
+const filterWav = item => /[.]wav/.test(path.extname(item.path))
 
 @Component({
   selector: 'app-settings',
@@ -122,7 +123,7 @@ export class SettingsComponent implements OnInit {
       this.stimuliPathAudioValidationMessage = 'Audio stimuli folder does not exist';
       return;
     }
-    let stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterImg });
+    let stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
     if (stimuli.length === 0) {
       this.stimuliPathAudioValidationMessage = 'No WAV files in audio stimuli folder';
       return;

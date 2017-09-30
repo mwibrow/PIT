@@ -55,6 +55,13 @@ button:focus {
   color: $button-danger-color;
 }
 
+
+.secondary  {
+  background-color: $button-secondary-background;
+  color: $button-secondary-color;
+}
+
+
 $spinner-size: 50px;
 $spinner-time: 2s;
 $spinner-border: 10px;
