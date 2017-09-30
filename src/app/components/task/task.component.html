@@ -1,14 +1,14 @@
 
 <div class="page">
-    <div class="tiles">
-        <div *ngFor="let tile of tiles">
-            <div *ngIf="tile.active" class="tile tile={{tile.stack}} color-light-{{tile.color}} {{tile.style}}-{{tile.direction}}">
-                <div  class="tile-inner">
-                    <div *ngFor="let imageSrc of tile.imageSrc">
-                        <img [src]="getImageSrc(imageSrc)"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="tiles">
+		<div *ngFor="let tile of tiles">
+			<div *ngIf="tile.active" class="tile tile={{tile.stack}} color-{{tile.color}} {{tile.style}}-{{tile.direction}}">
+				<div  class="tile-inner">
+					<div *ngFor="let imageSrc of tile.imageSrc; let i = index" class="image-wrapper" (click)="collectResponse(i)">
+						<img [src]="getImageSrc(imageSrc)"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

@@ -19,6 +19,7 @@ export class Settings {
     blockSize: number = 10;
     responseLength: number = 60;
     repetitions: number = 3;
+    escapeCombo: string = 'Escape|Escape|Escape';
 
 }
 
