@@ -100,10 +100,6 @@
     height: 192px;
   }
 
-  #left-eye {
-    transform: scaleY(0.5);
-  }
-
   button {
     background-color: $button-background;
     color: $button-color;
@@ -137,6 +133,7 @@
 .button-secondary {
    background-color: $button-secondary-background !important;
 }
+
 
 
 

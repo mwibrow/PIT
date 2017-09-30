@@ -86,6 +86,22 @@
         <span class="description">Number of trials in a block</span>
       </div>
     </div>
+
+    <div class="setting number">
+      <div class="setting-header">
+        <span class="title">Repetitions</span>
+        <span class="horizontal-filler"></span>
+        <div class="number-input-with-buttons">
+          <input type="number" min="1" max="100" [(ngModel)]="settings.repetitions" (change)="changeRepetitions(0)">
+          <button class="plus" (click)="changeRepetitions(1)">+</button>
+          <button class="minus" (click)="changeRepetitions(-1)">-</button>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">Number of repetitions for each stimulus</span>
+      </div>
+    </div>
+
   </div>
 </div>
 

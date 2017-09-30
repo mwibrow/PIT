@@ -113,7 +113,7 @@ $spinner-border: 10px;
       }
       button {
         background-color: color($colors, primary);
-        color: $dialog-color;
+        color: color($md-palette, md-white);
       }
       .ok {
         background-color: color($colors, danger);

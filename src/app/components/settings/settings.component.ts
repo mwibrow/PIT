@@ -106,6 +106,14 @@ export class SettingsComponent implements OnInit {
     if (this.settings.blockSize > 100) this.settings.blockSize = 100;
   }
 
+  changeRepetitions(by: number) {
+    if (by) {
+      this.settings.repetitions += by;
+    }
+    if (this.settings.repetitions < 1) this.settings.repetitions = 1;
+    if (this.settings.repetitions > 10) this.settings.repetitions = 10;
+  }
+
   changeResponseLength(by: number) {
     if (by) {
       this.settings.responseLength += by;

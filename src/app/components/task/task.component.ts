@@ -344,7 +344,7 @@ export class TaskComponent implements OnInit {
       case 'keydown':
 
         this.keyboardBuffer.push(event.key);
-        setTimeout(() => this.keyboardBuffer = [], 1000)
+        setTimeout(() => this.keyboardBuffer = [], 1000);
         if (this.keyboardBuffer.join('|').toLocaleLowerCase() === this.settings.escapeCombo.toLocaleLowerCase()) {
             this.abort = true;
             this.closeDialog();
