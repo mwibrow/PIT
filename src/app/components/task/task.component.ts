@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AudioService, AudioPlayer, AudioRecorder } from '../../providers/audio.service';
 import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef } from '@angular/material';
@@ -10,7 +10,7 @@ const fs = require('fs-extra');
 const klawSync = require('klaw-sync')
 const log = require('log')
 const path = require('path');
-var _ = require('lodash');
+const _ = require('lodash');
 
 import { ErrorComponent } from '../error/error.component';
 import { FinishComponent } from '../finish/finish.component';
@@ -21,10 +21,10 @@ import { SettingsService, Settings } from '../../providers/settings.service';
 const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
 const filterWav = item => /[.]wav/.test(path.extname(item.path))
 
-const COLOR_COUNT: number = 16;
+const COLOR_COUNT = 16;
 const DIRECTIONS: Array<string> =  ['top', 'bottom', 'left', 'right'];
-const STYLE_OUT: string = 'out';
-const STYLE_IN: string = 'in';
+const STYLE_OUT = 'out';
+const STYLE_IN = 'in';
 
 
 class Tile {
@@ -40,14 +40,11 @@ class Tile {
 
 }
 
+
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
-  styleUrls: ['./task.component.scss'],
-  host: {
-    '(document:keydown)': 'handleKeyboardEvents($event)',
-    '(document:keyup)': 'handleKeyboardEvents($event)'
-  }
+  styleUrls: ['./task.component.scss']
 })
 export class TaskComponent implements OnInit {
 
@@ -122,7 +119,7 @@ export class TaskComponent implements OnInit {
   private loadAudioStimuli() {
     return new Promise((resolve, reject) => {
       console.log(`Loading wav files from ${this.settings.stimuliPathAudio}`);
-      let stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
+      const stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
       if (stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
@@ -148,7 +145,7 @@ export class TaskComponent implements OnInit {
   private loadImageStimuli() {
     return new Promise((resolve, reject) => {
       console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
-      let stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+      const stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
       if (stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
@@ -167,8 +164,8 @@ export class TaskComponent implements OnInit {
   }
 
   private getBase(filePath): string {
-    let isWindows: boolean = path.sep === '//';
-    let pathApi = isWindows ? path.win32 : path;
+    const isWindows: boolean = path.sep === '//';
+    const pathApi = isWindows ? path.win32 : path;
     return pathApi.basename(filePath, path.extname(filePath))
   }
 
@@ -177,10 +174,10 @@ export class TaskComponent implements OnInit {
   }
 
   private runTask() {
-    let now = new Date();
+    const now = new Date();
     this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d%02d',
       now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
-    let participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
+    const participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
     fs.mkdirpSync(participantPath,
       (err) => {
         console.error(`Could not create folder '${participantPath}'`)
@@ -195,7 +192,7 @@ export class TaskComponent implements OnInit {
   }
 
   private writeRow(trial, images, target, response) {
-    let row = sprintf.sprintf('%10s %10s %10s %10s %10s %10s\n',
+    const row = sprintf.sprintf('%10s %10s %10s %10s %10s %10s\n',
       (trial).toString(), images[0], images[1], images[2], target, response)
     this.log.write(row)
   }
@@ -243,7 +240,7 @@ export class TaskComponent implements OnInit {
   }
 
   private collectResponse(i: number) {
-    let inTile = this.tiles[this.incomingTileIndex];
+    const inTile = this.tiles[this.incomingTileIndex];
     this.writeRow(this.trial + 1, inTile.names, this.target, inTile.names[i]);
     this.endTrial();
   }
@@ -268,17 +265,16 @@ export class TaskComponent implements OnInit {
   }
 
   private updateTiles(imageSrc?: Array<string>) {
-    let newColor: number;
-    let i = this.trial % this.stimuli.length;
-    let outgoingTileIndex: number = this.incomingTileIndex;
+    const i = this.trial % this.stimuli.length;
+    const outgoingTileIndex: number = this.incomingTileIndex;
     this.incomingTileIndex = 1 - this.incomingTileIndex;
 
-    let inTile = this.tiles[this.incomingTileIndex];
-    let outTile = this.tiles[1 - this.incomingTileIndex];
-    let directions = _.sampleSize(DIRECTIONS, 2);
+    const inTile = this.tiles[this.incomingTileIndex];
+    const outTile = this.tiles[1 - this.incomingTileIndex];
+    const directions = _.sampleSize(DIRECTIONS, 2);
     if (imageSrc) {
       this.loadImageSrc(imageSrc).then((results) => {
-        let src = [], names = [];
+        const src = [];
         results.map(result => src[result['index']] = result['data']);
         inTile.imageSrc = src;
         inTile.names = results.map(result => this.getBase(result['path']))
@@ -313,7 +309,7 @@ export class TaskComponent implements OnInit {
       })));
   }
 
-  public getImageSrc(imageSrc:string) {
+  public getImageSrc(imageSrc: string) {
     return `data:image/png;base64,${imageSrc}`;
   }
 
@@ -338,8 +334,10 @@ export class TaskComponent implements OnInit {
     });
   }
 
+  @HostListener('keydown')
+  @HostListener('keyup')
   handleKeyboardEvents(event: KeyboardEvent) {
-    let key = event.which || event.keyCode;
+    const key = event.which || event.keyCode;
     switch (event.type) {
       case 'keydown':
 
@@ -373,7 +371,9 @@ export class TaskComponent implements OnInit {
   }
 
   openDialog(id: string, target: any, options: any, afterClose: any) {
-    if (this.abort || this.finish) return;
+    if (this.abort || this.finish) {
+      return;
+    }
     if (this.dialogRefs.hasOwnProperty(id)) {
       this.dialogRefs[id].close();
     }
@@ -395,10 +395,10 @@ export class TaskComponent implements OnInit {
         delete this.dialogRefs[id];
       }
     } else {
-      for (let id in this.dialogRefs) {
-          if (this.dialogRefs.hasOwnProperty(id)) {
-          this.dialogRefs[id].close();
-          delete this.dialogRefs[id];
+      for (const property in this.dialogRefs) {
+          if (this.dialogRefs.hasOwnProperty(property)) {
+          this.dialogRefs[property].close();
+          delete this.dialogRefs[property];
         }
       }
     }
