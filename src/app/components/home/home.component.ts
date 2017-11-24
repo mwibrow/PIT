@@ -14,10 +14,10 @@ const remote = require('electron').remote;
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  title = `App works !`;
-  settingsRejectionMessage: string = '';
+  title = 'PIT';
+  settingsRejectionMessage = '';
   fade = 'fade-in';
-  logoSrc = "assets/images/pit-logo.svg"
+  logoSrc = 'assets/images/pit-logo.svg';
   constructor(private router: Router,
     public dialog: MdDialog,
     public settingsService: SettingsService) { }
