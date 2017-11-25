@@ -2,12 +2,11 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { AudioService, AudioPlayer, AudioRecorder } from '../../providers/audio.service';
 import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef } from '@angular/material';
+import * as fs from 'fs-extra';
 
 const sprintf = require ('sprintf-js');
 
 const storage = require('electron-json-storage');
-const fs = require('fs-extra');
-const klawSync = require('klaw-sync')
 const log = require('log')
 const path = require('path');
 const _ = require('lodash');
@@ -18,8 +17,8 @@ import { ReadyComponent } from '../ready/ready.component';
 import { BreakComponent } from '../break/break.component';
 import { SettingsService, Settings } from '../../providers/settings.service';
 
-const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
-const filterWav = item => /[.]wav/.test(path.extname(item.path))
+const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item))
+const filterWav = item => /[.]wav/.test(path.extname(item))
 
 const COLOR_COUNT = 16;
 const DIRECTIONS: Array<string> =  ['top', 'bottom', 'left', 'right'];
@@ -119,7 +118,9 @@ export class TaskComponent implements OnInit {
   private loadAudioStimuli() {
     return new Promise((resolve, reject) => {
       console.log(`Loading wav files from ${this.settings.stimuliPathAudio}`);
-      const stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
+      const stimuli = fs.readdirSync(this.settings.stimuliPathAudio)
+        .filter(filterWav)
+        .map(wav => path.join(this.settings.stimuliPathAudio, wav));
       if (stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
@@ -145,7 +146,9 @@ export class TaskComponent implements OnInit {
   private loadImageStimuli() {
     return new Promise((resolve, reject) => {
       console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
-      const stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+      const stimuli = fs.readdirSync(this.settings.stimuliPathImage)
+        .filter(filterImg)
+        .map(img => path.join(this.settings.stimuliPathImage, img));
       if (stimuli.length === 0) {
         this.openDialog('error', ErrorComponent, {
           data: {
@@ -178,10 +181,11 @@ export class TaskComponent implements OnInit {
     this.participantFolder = sprintf.sprintf('%04d%02d%02d-%02d%02d%02d',
       now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
     const participantPath = path.normalize(path.join(this.settings.responsesPath, this.participantFolder));
-    fs.mkdirpSync(participantPath,
-      (err) => {
-        console.error(`Could not create folder '${participantPath}'`)
-      });
+    try {
+      fs.mkdirpSync(participantPath);
+    } catch (err) {
+      console.log(`Could not create directory ${participantPath}`);
+    }
     this.log = fs.createWriteStream(path.join(participantPath, 'results.txt'))
     this.writeRow('trial', ['image1', 'image2', 'image3'], 'target', 'response')
     this.stimuli = _.shuffle(this.stimuli);

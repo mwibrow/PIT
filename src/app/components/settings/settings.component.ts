@@ -5,13 +5,12 @@ import { ErrorComponent } from '../error/error.component';
 
 import { SettingsService, Settings, notSet } from '../../providers/settings.service';
 
-const {dialog} = require('electron').remote;
-const fs = require('fs-extra');
-const klawSync = require('klaw-sync')
+const electronDialog = require('electron').remote.dialog;
+import * as fs from 'fs-extra';
 const path = require('path');
 
-const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item.path))
-const filterWav = item => /[.]wav/.test(path.extname(item.path))
+const filterImg = item => /[.](jpg|jpeg|png)/.test(path.extname(item))
+const filterWav = item => /[.]wav/.test(path.extname(item))
 
 @Component({
   selector: 'app-settings',
@@ -21,9 +20,9 @@ const filterWav = item => /[.]wav/.test(path.extname(item.path))
 export class SettingsComponent implements OnInit {
 
   public settings: Settings;
-  public stimuliPathAudioValidationMessage: string ='';
-  public stimuliPathImageValidationMessage: string ='';
-  public responsesPathValidationMessage: string ='';
+  public stimuliPathAudioValidationMessage = '';
+  public stimuliPathImageValidationMessage = '';
+  public responsesPathValidationMessage = '';
 
   constructor(
       private router: Router,
@@ -38,36 +37,36 @@ export class SettingsComponent implements OnInit {
   }
 
   changeStimuliPathAudio() {
-    let path: any = dialog.showOpenDialog({
+    const stimuliPath: any = electronDialog.showOpenDialog({
       properties: ['openDirectory'],
       defaultPath: this.settings.stimuliPathAudio
     });
-    if (path && path.length === 1) {
-      this.settings.stimuliPathAudio = path[0];
+    if (stimuliPath && stimuliPath.length === 1) {
+      this.settings.stimuliPathAudio = stimuliPath[0];
       this.validateStimuliPathAudio();
 
     }
   }
 
   changeStimuliPathImage() {
-    let path: any = dialog.showOpenDialog({
+    const stimuliPath: any = electronDialog.showOpenDialog({
       properties: ['openDirectory'],
       defaultPath: this.settings.stimuliPathImage
     });
-    if (path && path.length === 1) {
-      this.settings.stimuliPathImage = path[0];
+    if (stimuliPath && stimuliPath.length === 1) {
+      this.settings.stimuliPathImage = stimuliPath[0];
       this.validateStimuliPathImage();
 
     }
   }
 
   changeResponsesPath() {
-    let path: any = dialog.showOpenDialog({
+    const stimuliPath: any = electronDialog.showOpenDialog({
       properties: ['openDirectory'],
       defaultPath: this.settings.responsesPath
     });
-    if (path && path.length === 1) {
-      this.settings.responsesPath = path[0];
+    if (stimuliPath && stimuliPath.length === 1) {
+      this.settings.responsesPath = stimuliPath[0];
       this.validateResponsesPath();
     }
   }
@@ -95,31 +94,44 @@ export class SettingsComponent implements OnInit {
     this.validateStimuliPathAudio();
     this.validateStimuliPathImage();
     this.validateResponsesPath();
-    return this.responsesPathValidationMessage === '' && this.stimuliPathAudioValidationMessage === '' && this.stimuliPathImageValidationMessage === '';
+    return this.responsesPathValidationMessage === '' && this.stimuliPathAudioValidationMessage === ''
+      && this.stimuliPathImageValidationMessage === '';
   }
 
   changeBlockSize(by: number) {
     if (by) {
       this.settings.blockSize += by;
     }
-    if (this.settings.blockSize < 1) this.settings.blockSize = 1;
-    if (this.settings.blockSize > 100) this.settings.blockSize = 100;
+    if (this.settings.blockSize < 1) {
+      this.settings.blockSize = 1;
+    }
+    if (this.settings.blockSize > 100) {
+      this.settings.blockSize = 100;
+    }
   }
 
   changeRepetitions(by: number) {
     if (by) {
       this.settings.repetitions += by;
     }
-    if (this.settings.repetitions < 1) this.settings.repetitions = 1;
-    if (this.settings.repetitions > 10) this.settings.repetitions = 10;
+    if (this.settings.repetitions < 1) {
+      this.settings.repetitions = 1;
+    }
+    if (this.settings.repetitions > 10) {
+      this.settings.repetitions = 10;
+    }
   }
 
   changeResponseLength(by: number) {
     if (by) {
       this.settings.responseLength += by;
     }
-    if (this.settings.responseLength < 1) this.settings.responseLength = 1;
-    if (this.settings.responseLength > 10) this.settings.responseLength = 10;
+    if (this.settings.responseLength < 1) {
+      this.settings.responseLength = 1;
+    }
+    if (this.settings.responseLength > 10) {
+      this.settings.responseLength = 10;
+    }
   }
 
   validateStimuliPathAudio() {
@@ -131,7 +143,7 @@ export class SettingsComponent implements OnInit {
       this.stimuliPathAudioValidationMessage = 'Audio stimuli folder does not exist';
       return;
     }
-    let stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
+    const stimuli = fs.readdirSync(this.settings.stimuliPathAudio).filter(filterWav);
     if (stimuli.length === 0) {
       this.stimuliPathAudioValidationMessage = 'No WAV files in audio stimuli folder';
       return;
@@ -148,7 +160,7 @@ export class SettingsComponent implements OnInit {
       this.stimuliPathImageValidationMessage = 'Image stimuli folder does not exist';
       return;
     }
-    let stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+    const stimuli = fs.readdirSync(this.settings.stimuliPathImage).filter(filterImg);
     if (stimuli.length === 0) {
       this.stimuliPathImageValidationMessage = 'No image files in stimuli folder';
       return;
@@ -162,7 +174,7 @@ export class SettingsComponent implements OnInit {
       return;
     }
     try {
-      fs.accessSync(this.settings.responsesPath, fs.W_OK);
+      fs.accessSync(this.settings.responsesPath, fs.constants.W_OK);
     } catch (err) {
       this.responsesPathValidationMessage = 'Cannot write to Responses folder';
       return;
@@ -182,7 +194,7 @@ const validateSettings = (settings: any)  => {
     if (!fs.pathExistsSync(settings.stimuliPath)) {
       reject('Stimuli folder does not exist')
     }
-    let stimuli = klawSync(settings.stimuliPath, { filter: filterImg });
+    const stimuli =  fs.readdirSync(settings.stimuliPath).filter(filterImg);
     if (stimuli.length === 0) {
       reject('No image files in stimuli folder');
     }
@@ -190,7 +202,7 @@ const validateSettings = (settings: any)  => {
       reject('Responses folder not set');
     }
     try {
-      fs.accessSync(settings.responsesPath, fs.W_OK);
+      fs.accessSync(settings.responsesPath, fs.constants.W_OK);
     } catch (err) {
       reject('Cannot write to Responses folder');
     }
