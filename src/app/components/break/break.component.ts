@@ -1,20 +1,16 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, HostListener } from '@angular/core';
 import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-break',
   templateUrl: './break.component.html',
-  styleUrls: ['./break.component.scss'],
-  host: {
-    '(document:keydown)': 'handleKeyboardEvents($event)',
-    '(document:keyup)': 'handleKeyboardEvents($event)'
-  }
+  styleUrls: ['./break.component.scss']
 })
 export class BreakComponent implements OnInit {
 
   private keyboardBuffer: Array<string>;
-  private escapeCombo: string = 'Escape';
+  private escapeCombo = 'escape|escape|escape';
   constructor(@Inject(MD_DIALOG_DATA) data: any,
       private dialogRef: MdDialogRef<BreakComponent>,
       private router: Router) {
@@ -27,8 +23,13 @@ export class BreakComponent implements OnInit {
   ngOnInit() {
   }
 
+  @HostListener('document:keydown', ['$event'])
+  keydown(event: KeyboardEvent) {
+    this.handleKeyboardEvents(event);
+  }
+
   handleKeyboardEvents(event: KeyboardEvent) {
-    let key = event.which || event.keyCode;
+    const key = event.which || event.keyCode;
     switch (event.type) {
       case 'keydown':
         if (event.keyCode === 32) {
@@ -36,7 +37,7 @@ export class BreakComponent implements OnInit {
         }
         this.keyboardBuffer.push(event.key);
         setTimeout(() => this.keyboardBuffer = [], 1000)
-        if (this.keyboardBuffer.join('|') === this.escapeCombo) {
+        if (this.keyboardBuffer.join('|').toLowerCase() === this.escapeCombo) {
             this.dialogRef.close();
             this.router.navigateByUrl('');
         }

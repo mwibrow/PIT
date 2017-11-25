@@ -186,7 +186,6 @@ module.exports = {
     "fs-extra": "require('fs-extra')",
     "http": "require('http')",
     "https": "require('https')",
-    "klaw-sync": "require('klaw-sync')",
     "lodash": "require('lodash')",
     "assert": "require('assert')",
     "dns": "require('dns')",

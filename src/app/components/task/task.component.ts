@@ -133,7 +133,7 @@ export class TaskComponent implements OnInit {
           });
       }
       console.log(`Loaded ${stimuli.length} audio paths.`);
-      this.audioStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus.path)]: stimulus.path}), {})
+      this.audioStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
       this.stimuli = Object.keys(this.audioStimuli);
       if (this.settings.repetitions > 1) {
         this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.stimuli));
@@ -161,7 +161,7 @@ export class TaskComponent implements OnInit {
           });
       }
       console.log(`Loaded ${stimuli.length} image paths.`);
-      this.imageStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus.path)]: stimulus.path}), {})
+      this.imageStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
       resolve();
     });
   }
@@ -338,8 +338,11 @@ export class TaskComponent implements OnInit {
     });
   }
 
-  @HostListener('keydown')
-  @HostListener('keyup')
+  @HostListener('document:keydown', ['$event'])
+  keydown(event: KeyboardEvent) {
+    this.handleKeyboardEvents(event);
+  }
+
   handleKeyboardEvents(event: KeyboardEvent) {
     const key = event.which || event.keyCode;
     switch (event.type) {

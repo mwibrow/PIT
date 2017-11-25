@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 
-const fs = require('fs-extra');
+import * as fs from 'fs-extra';
+
 const storage = require('electron-json-storage');
-const klawSync = require('klaw-sync')
 const path = require('path');
 
-const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item.path))
-const filterWav = item => /[.](wav)/.test(path.extname(item.path))
+const filterImg = item => /[.](svg|jpg|jpeg|png)/.test(path.extname(item))
+const filterWav = item => /[.](wav)/.test(path.extname(item))
 
-export const notSet: string = 'Not set!';
+export const notSet = 'Not set!';
 
 export class Settings {
 
@@ -16,10 +16,10 @@ export class Settings {
     stimuliPathAudio: string = notSet;
     stimuliPathImage: string = notSet;
     responsesPath: string = notSet;
-    blockSize: number = 10;
-    responseLength: number = 60;
-    repetitions: number = 3;
-    escapeCombo: string = 'Escape|Escape|Escape';
+    blockSize = 10;
+    responseLength = 60;
+    repetitions = 3;
+    escapeCombo = 'Escape|Escape|Escape';
 
 }
 
@@ -41,7 +41,8 @@ export class SettingsService {
           if (error) {
             reject(error);
           } else {
-            let settings: any = data || {}, setting: any;
+            const settings: any = data || {};
+            let setting: any;
             for (setting in settings) {
               if (settings.hasOwnProperty(setting)) {
                 this.settings[setting] = settings[setting];
@@ -76,7 +77,7 @@ export class SettingsService {
         if (!fs.pathExistsSync(this.settings.stimuliPathAudio)) {
           reject('Audio stimuli folder does not exist')
         }
-        stimuli = klawSync(this.settings.stimuliPathAudio, { filter: filterWav });
+        stimuli = fs.readdirSync(this.settings.stimuliPathAudio).filter(filterWav);
         if (stimuli.length === 0) {
           reject('No Wav files in audio stimuli folder');
         }
@@ -87,7 +88,7 @@ export class SettingsService {
         if (!fs.pathExistsSync(this.settings.stimuliPathImage)) {
           reject('Image stimuli folder does not exist')
         }
-        stimuli = klawSync(this.settings.stimuliPathImage, { filter: filterImg });
+        stimuli = fs.readdirSync(this.settings.stimuliPathImage).filter(filterImg);
         if (stimuli.length === 0) {
           reject('No Image files in stimuli folder');
         }
@@ -96,7 +97,7 @@ export class SettingsService {
           reject('Responses folder not set');
         }
         try {
-          fs.accessSync(this.settings.responsesPath, fs.W_OK);
+          fs.accessSync(this.settings.responsesPath, fs.constants.W_OK);
         } catch (err) {
           reject('Cannot write to Responses folder');
         }
@@ -123,7 +124,8 @@ class FolderSetting implements Setting<string> {
 
   value: string;
   defaultValue: string;
-  permissions: any = fs.W_OK | fs.R_OK;
+  // tslint:disable-next-line
+  permissions: any = fs.constants.W_OK | fs.constants.R_OK;
 
   validate(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -156,9 +158,10 @@ class NumberSetting implements Setting<number> {
   min: number;
   max: number;
 
-  permissions: any = fs.W_OK | fs.R_OK;
+  // tslint:disable-next-line
+  permissions: any = fs.constants.W_OK | fs.constants.R_OK;
 
-  constructor(defaultValue: number, min: number, max:number) {
+  constructor(defaultValue: number, min: number, max: number) {
     this.value = this.defaultValue = defaultValue;
     this.min = min;
     this.max = max;
