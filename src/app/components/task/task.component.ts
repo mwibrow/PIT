@@ -145,7 +145,7 @@ export class TaskComponent implements OnInit {
 
   private loadImageStimuli() {
     return new Promise((resolve, reject) => {
-      console.log(`Loading wav files from ${this.settings.stimuliPathImage}`);
+      console.log(`Loading image files from ${this.settings.stimuliPathImage}`);
       const stimuli = fs.readdirSync(this.settings.stimuliPathImage)
         .filter(filterImg)
         .map(img => path.join(this.settings.stimuliPathImage, img));
@@ -307,6 +307,7 @@ export class TaskComponent implements OnInit {
   private loadImageSrc(imageSrc: Array<string>) {
     return Promise.all(
       imageSrc.map((src, i) => new Promise((resolve, reject) => {
+        console.log(`Loading image: ${src}`)
         fs.readFile(src, (err, buffer) => {
           resolve({path: src, index: i, data: buffer.toString('base64')});
         })
