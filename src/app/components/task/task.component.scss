@@ -158,9 +158,9 @@ img[src=""] {
 
     .image-wrapper {
         background-color: color($md-palette, md-black);
-        padding: 16px;
-        border-radius: 16px;
-        margin-left: 32px;
+        padding: 2vw;
+        border-radius: 2vw;
+        margin-left: 2vw;
         &:first-child {
             margin-left: 0px;
         }
@@ -169,7 +169,7 @@ img[src=""] {
         }
     }
     img {
-        width: 320px;
-        height: 320px;
+        width: 25vw;
+        height: 25vw;
     }
 }
