@@ -23,6 +23,12 @@ export class Settings {
 
 }
 
+function getBase(filePath): string {
+  const isWindows: boolean = path.sep === '//';
+  const pathApi = isWindows ? path.win32 : path;
+  return pathApi.basename(filePath, path.extname(filePath))
+}
+
 @Injectable()
 export class SettingsService {
 
@@ -81,6 +87,12 @@ export class SettingsService {
         if (stimuli.length === 0) {
           reject('No Wav files in audio stimuli folder');
         }
+        stimuli.filter(stimulus => {
+          if (!getBase(stimulus).match(/[a-z0-9]+-[a-z0-9]+/)) {
+            reject(`Audio file named incorrectly: ${stimulus}`);
+          }
+        });
+        const words: Set<string> = new Set<string>(stimuli.map(stimulus => getBase(stimulus).split('-')[0]))
         // Check image folder
         if (!this.settings.stimuliPathImage || this.settings.stimuliPathImage === notSet) {
           reject('Image stimuli folder not set');
@@ -91,6 +103,16 @@ export class SettingsService {
         stimuli = fs.readdirSync(this.settings.stimuliPathImage).filter(filterImg);
         if (stimuli.length === 0) {
           reject('No Image files in stimuli folder');
+        }
+        stimuli.filter(stimulus => {
+          if (!getBase(stimulus).match(/[a-z0-9]+/)) {
+            reject(`Image file named incorrectly: ${stimulus}`);
+          }
+        });
+        const images: Set<string> =  new Set<string>(stimuli.map(stimulus => getBase(stimulus)));
+        const difference = Array.from(words.values()).filter(word => !images.has(word));
+        if (difference.length) {
+          reject(`No image file for word '${difference[0]}'`);
         }
         // Check respones folder
         if (!this.settings.responsesPath || this.settings.responsesPath === notSet) {
