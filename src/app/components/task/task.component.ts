@@ -57,6 +57,7 @@ export class TaskComponent implements OnInit {
   private participantFolder: string;
   private now: Date;
   private target: string;
+  private stimulus: string;
   private responses: Array<string>;
 
   private player: AudioPlayer;
@@ -187,7 +188,7 @@ export class TaskComponent implements OnInit {
       console.log(`Could not create directory ${participantPath}`);
     }
     this.log = fs.createWriteStream(path.join(participantPath, 'results.txt'))
-    this.writeRow('trial', ['image1', 'image2', 'image3'], 'target', 'response')
+    this.writeRow('trial', ['image1', 'image2', 'image3'], 'target', 'response', 'speaker')
     this.stimuli = _.shuffle(this.stimuli);
     this.finish = false;
     this.abort = false;
@@ -195,9 +196,9 @@ export class TaskComponent implements OnInit {
     this.runTrial();
   }
 
-  private writeRow(trial, images, target, response) {
-    const row = sprintf.sprintf('%10s %10s %10s %10s %10s %10s\n',
-      (trial).toString(), images[0], images[1], images[2], target, response)
+  private writeRow(trial, images, target, response, speaker) {
+    const row = sprintf.sprintf('%10s %10s %10s %10s %10s %10s %10s\n',
+      (trial).toString(), images[0], images[1], images[2], target, response, speaker)
     this.log.write(row)
   }
 
@@ -225,7 +226,8 @@ export class TaskComponent implements OnInit {
     let i: number;
     return new Promise((resolve, reject) => {
       i = this.trial % this.stimuli.length;
-      this.target = this.stimuli[i]
+      this.stimulus = this.stimuli[i];
+      this.target = this.stimulus.split('-')[0];
       this.responses = _.shuffle(_.sampleSize(
           Object.keys(this.imageStimuli).filter(image => image !== this.target), 2).concat([this.target]))
       this.updateTiles(this.responses.map(image => this.imageStimuli[image]))
@@ -235,7 +237,8 @@ export class TaskComponent implements OnInit {
 
   private loadAudio() {
     return new Promise((resolve, reject) => {
-      this.player.loadWav(this.audioStimuli[this.target]).then(() => resolve())
+      console.log('Loading audio', this.audioStimuli[this.stimulus]);
+      this.player.loadWav(this.audioStimuli[this.stimulus]).then(() => resolve())
     });
   }
 
@@ -245,7 +248,7 @@ export class TaskComponent implements OnInit {
 
   private collectResponse(i: number) {
     const inTile = this.tiles[this.incomingTileIndex];
-    this.writeRow(this.trial + 1, inTile.names, this.target, inTile.names[i]);
+    this.writeRow(this.trial + 1, inTile.names, this.target, inTile.names[i], this.stimulus.split('-')[1]);
     this.endTrial();
   }
 
