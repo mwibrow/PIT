@@ -194,6 +194,7 @@ export class TaskComponent implements OnInit {
     this.finish = false;
     this.abort = false;
     this.taskRunning = true;
+    this.trial = 0;
     this.runTrial();
   }
 
@@ -210,6 +211,7 @@ export class TaskComponent implements OnInit {
   }
 
   private runTrial() {
+    console.log(`Trial ${this.trial + 1}`)
     this.startTrial()
       .then(() => this.showImages())
       .then(() => this.loadAudio())
@@ -251,6 +253,7 @@ export class TaskComponent implements OnInit {
   }
 
   private playAudio() {
+    this.transition = false;
     this.player.play();
   }
 
@@ -274,14 +277,13 @@ export class TaskComponent implements OnInit {
       this.updateTiles(null);
       this.transition = true;
       setTimeout(() => {
-        this.transition = false;
         this.endTask();
       }, 2000);
     } else {
       if (this.trial % this.settings.blockSize === 0) {
         this.updateTiles(null);
+        this.transition = true;
         setTimeout(() => {
-          this.transition = false;
           this.break()
         }, 1500);
       } else {
@@ -354,6 +356,7 @@ export class TaskComponent implements OnInit {
   }
 
   private break() {
+    console.log('Break!');
     this.openDialog('break', BreakComponent,  {
       disableClose: true,
       data: {
