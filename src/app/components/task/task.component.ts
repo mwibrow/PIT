@@ -77,6 +77,7 @@ export class TaskComponent implements OnInit {
   private savedTileColor: number;
 
   private log;
+  public transition: boolean;
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -212,7 +213,10 @@ export class TaskComponent implements OnInit {
     this.startTrial()
       .then(() => this.showImages())
       .then(() => this.loadAudio())
-      .then(() => this.playAudio());
+      .then(() => this.playAudio())
+      .catch((err) => {
+        console.error(err)
+      }) ;
   }
 
   private startTrial() {
@@ -238,7 +242,11 @@ export class TaskComponent implements OnInit {
   private loadAudio() {
     return new Promise((resolve, reject) => {
       console.log('Loading audio', this.audioStimuli[this.stimulus]);
-      this.player.loadWav(this.audioStimuli[this.stimulus]).then(() => resolve())
+      this.player.loadWav(this.audioStimuli[this.stimulus])
+        .then(() => resolve())
+        .catch((err) => {
+          console.error(err);
+        });
     });
   }
 
@@ -247,6 +255,10 @@ export class TaskComponent implements OnInit {
   }
 
   private collectResponse(i: number) {
+    if (this.transition) {
+      return;
+    }
+    this.player.stop();
     const inTile = this.tiles[this.incomingTileIndex];
     this.writeRow(this.trial + 1, inTile.names, this.target, inTile.names[i], this.stimulus.split('-')[1]);
     this.endTrial();
@@ -260,11 +272,18 @@ export class TaskComponent implements OnInit {
     }
     if (this.trial >= this.stimuli.length) {
       this.updateTiles(null);
-      setTimeout(() => this.endTask(), 2000);
+      this.transition = true;
+      setTimeout(() => {
+        this.transition = false;
+        this.endTask();
+      }, 2000);
     } else {
       if (this.trial % this.settings.blockSize === 0) {
         this.updateTiles(null);
-        setTimeout(() => this.break(), 1500);
+        setTimeout(() => {
+          this.transition = false;
+          this.break()
+        }, 1500);
       } else {
         this.runTrial();
       }
@@ -292,7 +311,11 @@ export class TaskComponent implements OnInit {
         outTile.style = STYLE_OUT;
         outTile.direction = directions[1];
         inTile.active = true;
-        setTimeout(() => this.tiles[outgoingTileIndex].imageSrc = null, 2000);
+        this.transition = true;
+        setTimeout(() => {
+          this.transition = false;
+          this.tiles[outgoingTileIndex].imageSrc = null;
+        }, 2000);
       });
     } else {
       inTile.imageSrc = null;

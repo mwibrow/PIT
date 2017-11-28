@@ -117,11 +117,13 @@ export class AudioPlayer extends AudioEventHandler {
             audioData.numberOfChannels,
             audioData.length,
             audioData.sampleRate);
-          for (let i: number = 0; i < audioData.numberOfChannels; i ++) {
+          for (let i = 0; i < audioData.numberOfChannels; i ++) {
             this.buffer.copyToChannel(audioData.channelData[i], 0);
           }
           this.emit('load');
           resolve();
+      }).catch((err) => {
+        console.log(err);
       });
     });
   }
