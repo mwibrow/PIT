@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
     </h2>
     <div md-dialog-content>
       Are you sure you want to quit
-      <span class="logo"><span>S</span><span>W</span><span>Im</span><span>!</span>
+      <span class="logo"><span>P</span><span>I</span><span>T</span>
     </span>?
     </div>
     <div md-dialog-actions>
