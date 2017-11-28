@@ -12,9 +12,12 @@ import { MdDialogRef } from '@angular/material';
 })
 export class FinishComponent implements OnInit {
 
-  constructor(private dialogRef: MdDialogRef<FinishComponent>) { }
+  constructor(private dialogRef: MdDialogRef<FinishComponent>) {
+
+   }
 
   ngOnInit() {
+    console.log('Finished!')
   }
 
   handleKeyboardEvents(event: KeyboardEvent) {
