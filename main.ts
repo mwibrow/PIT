@@ -41,9 +41,10 @@ function createWindow() {
     win = null;
   });
 
-  win.on('resize', () => {
-    win.webContents.reloadIgnoringCache();
-  });
+  // Restart on resize
+  // win.on('resize', () => {
+  //   win.webContents.reloadIgnoringCache();
+  // });
 }
 
 try {
