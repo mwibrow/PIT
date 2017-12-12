@@ -122,6 +122,11 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  toggleStratifiedSampling() {
+    this.settings.stratifiedSampling = !this.settings.stratifiedSampling
+    console.log('target')
+  }
+
   changeResponseLength(by: number) {
     if (by) {
       this.settings.responseLength += by;

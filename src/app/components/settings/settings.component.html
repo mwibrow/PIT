@@ -18,7 +18,10 @@
         </div>
       </div>
       <div class="setting-description">
-        <span class="description">All .wav files in this folder will be used for stimuli</span>
+        <span class="description">
+          All .wav files in this folder will be used for stimuli.
+          Files should be named using the pattern 'WORD-TALKER.wav'
+        </span>
       </div>
       <div class="setting-value">
         <span>{{ settings.stimuliPathAudio }}</span>
@@ -40,7 +43,10 @@
         </div>
       </div>
       <div class="setting-description">
-        <span class="description">All image files in this folder will be used for stimuli</span>
+        <span class="description">
+          All image files in this folder will be used for stimuli.
+          Files should be named WORD.png or WORD.jpg
+        </span>
       </div>
       <div class="setting-value">
         <span>{{ settings.stimuliPathImage }}</span>
@@ -101,6 +107,25 @@
         <span class="description">Number of repetitions for each stimulus</span>
       </div>
     </div>
+
+    <div class="setting number">
+      <div class="setting-header">
+        <span class="title">Stratified sampling</span>
+        <span class="sampling-on-off sampling-{{ settings.stratifiedSampling ? 'on' : 'off' }}">{{ settings.stratifiedSampling ? 'On' : 'Off' }}</span>
+        <span class="horizontal-filler"></span>
+        <div class="input-toggle-button toggle-button-{{ settings.stratifiedSampling ? 'on' : 'off' }}"
+         (click)="toggleStratifiedSampling()">
+          <div class="toggle-button-outer">
+            <div class="toggle-button-inner">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="setting-description">
+        <span class="description">Generate stimuli list using stratified sampling</span>
+      </div>
+    </div>
+
 
   </div>
 </div>

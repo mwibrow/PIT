@@ -285,3 +285,63 @@ button {
     background-color: color($md-palette, md-light-green);
   }
 }
+
+.input-toggle-button {
+  width: 3rem;
+  height: 1.5rem;
+}
+
+.toggle-button-outer {
+  width: 3rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+  position: relative;
+  transition-property: background-color;
+  transition-duration: 0.5s;
+}
+
+.toggle-button-inner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  position: absolute;
+  transition-property: left, color;
+  transition-duration: 0.5s;
+}
+
+.input-toggle-button {
+  width: 3rem;
+  height: 1.5rem;
+  &.toggle-button-on {
+    .toggle-button-outer {
+      background-color: color($md-palette, md-light-blue-300);
+    }
+    .toggle-button-inner {
+      background-color: color($md-palette, md-light-blue-700);
+      top: 0;
+      left: calc(100% - 1.5rem);
+    }
+  }
+  &.toggle-button-off {
+    .toggle-button-outer {
+      background-color: color($md-palette, md-blue-grey-100);
+    }
+    .toggle-button-inner {
+      background-color: color($md-palette, md-blue-grey-50);
+      top: 0;
+      left: 0;
+    }
+  }
+}
+
+.sampling-on-off {
+  padding-left: 1rem;
+}
+
+.sampling-off {
+  color: color($md-palette, md-blue-grey-100);
+}
+
+.sampling-on {
+  color: color($md-palette, md-light-blue-500);
+}

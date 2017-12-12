@@ -20,7 +20,7 @@ export class Settings {
     responseLength = 60;
     repetitions = 3;
     escapeCombo = 'Escape|Escape|Escape';
-
+    stratifiedSampling = true
 }
 
 function getBase(filePath): string {
@@ -88,8 +88,8 @@ export class SettingsService {
           reject('No Wav files in audio stimuli folder');
         }
         stimuli.filter(stimulus => {
-          if (!getBase(stimulus).match(/[a-z0-9]+-[a-z0-9]+/)) {
-            reject(`Audio file named incorrectly: ${stimulus}`);
+          if (!getBase(stimulus).match(/[A-z0-9]+-[A-z0-9]+/)) {
+            reject(`Audio file should be named 'word-speaker.wav': ${stimulus}`);
           }
         });
         const words: Set<string> = new Set<string>(stimuli.map(stimulus => getBase(stimulus).split('-')[0]))
@@ -105,7 +105,7 @@ export class SettingsService {
           reject('No Image files in stimuli folder');
         }
         stimuli.filter(stimulus => {
-          if (!getBase(stimulus).match(/[a-z0-9]+/)) {
+          if (!getBase(stimulus).match(/[A-z0-9]+/)) {
             reject(`Image file named incorrectly: ${stimulus}`);
           }
         });
