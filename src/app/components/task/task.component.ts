@@ -48,7 +48,7 @@ class Tile {
 export class TaskComponent implements OnInit {
 
   private settings: Settings;
-  private stimuli: Array<any>;
+  private stimuli: Array<{word: string, talker: string}>;
 
   private audioStimuli: any;
   private imageStimuli: any;
@@ -57,7 +57,7 @@ export class TaskComponent implements OnInit {
   private participantFolder: string;
   private now: Date;
   private target: string;
-  private stimulus: string;
+  private stimulus: {word: string, talker: string};
   private responses: Array<string>;
 
   private player: AudioPlayer;
@@ -78,6 +78,10 @@ export class TaskComponent implements OnInit {
 
   private log;
   public transition: boolean;
+
+  public words: string[];
+  public talkers: string[];
+
   constructor(
       private router: Router,
       private audio: AudioService,
@@ -109,6 +113,9 @@ export class TaskComponent implements OnInit {
     this.savedTileColor = null;
     this.log = null;
 
+    this.words = [];
+    this.talkers = [];
+
   }
 
   private loadStimuli() {
@@ -135,13 +142,41 @@ export class TaskComponent implements OnInit {
           });
       }
       console.log(`Loaded ${stimuli.length} audio paths.`);
+      const words = new Set()
+      const talkers = new Set()
+      stimuli.map(stimulus => {
+        const base = this.getBase(stimulus);
+        const [word, talker] = base.split('-');
+        words.add(word);
+        talkers.add(talker);
+      })
+      this.words = Array.from(words);
+      this.talkers = Array.from(talkers);
+      console.log(`${this.words.length} words and ${this.talkers.length} talkers`);
       this.audioStimuli = stimuli.reduce((obj, stimulus) => Object.assign(obj, {[this.getBase(stimulus)]: stimulus}), {})
-      this.stimuli = Object.keys(this.audioStimuli);
-      if (this.settings.repetitions > 1) {
-        this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.stimuli));
+      if (this.settings.stratifiedSampling) {
+        const totalStimuli = this.words.length * this.settings.repetitions
+        const n = Math.ceil(totalStimuli / this.talkers.length)
+        this.words = _.shuffle(this.words)
+        const wordArray = _.flatten(_.times(this.settings.repetitions, () => this.words.slice()));
+        this.stimuli = this.talkers
+          .reduce((arr, talker, i) => arr.concat(
+            wordArray.slice(i * n, i * n + n)
+              .map((word: string) => ({ word, talker }))
+            ), [])
+        resolve()
+      } else {
+        this.stimuli = Object.keys(this.audioStimuli).map((stimulus: string) => {
+          const base = this.getBase(stimulus);
+          const [word, talker] = base.split('-');
+          return { word, talker }
+        });
+        if (this.settings.repetitions > 1) {
+          this.stimuli = _.flatten(_.times(this.settings.repetitions, () => this.stimuli));
+        }
+        console.log(`Total audio stimuli (including repetitions): ${this.stimuli.length}`)
+        resolve();
       }
-      console.log(`Total audio stimuli (including repetitions): ${this.stimuli.length}`)
-      resolve();
     });
   }
 
@@ -233,7 +268,7 @@ export class TaskComponent implements OnInit {
     return new Promise((resolve, reject) => {
       i = this.trial % this.stimuli.length;
       this.stimulus = this.stimuli[i];
-      this.target = this.stimulus.split('-')[0];
+      this.target = this.stimulus.word;
       this.responses = _.shuffle(_.sampleSize(
           Object.keys(this.imageStimuli).filter(image => image !== this.target), 2).concat([this.target]))
       this.updateTiles(this.responses.map(image => this.imageStimuli[image]))
@@ -243,8 +278,9 @@ export class TaskComponent implements OnInit {
 
   private loadAudio() {
     return new Promise((resolve, reject) => {
-      console.log('Loading audio', this.audioStimuli[this.stimulus]);
-      this.player.loadWav(this.audioStimuli[this.stimulus])
+      const audio = `${this.stimulus.word}-${this.stimulus.talker}`;
+      console.log('Loading audio', this.audioStimuli[audio]);
+      this.player.loadWav(this.audioStimuli[audio])
         .then(() => resolve())
         .catch((err) => {
           console.error(err);
@@ -263,7 +299,7 @@ export class TaskComponent implements OnInit {
     }
     this.player.stop();
     const inTile = this.tiles[this.incomingTileIndex];
-    this.writeRow(this.trial + 1, inTile.names, this.target, inTile.names[i], this.stimulus.split('-')[1]);
+    this.writeRow(this.trial + 1, inTile.names, this.target, inTile.names[i], this.stimulus.talker);
     this.endTrial();
   }
 
