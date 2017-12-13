@@ -293,6 +293,12 @@ export class TaskComponent implements OnInit {
     this.player.play();
   }
 
+  replay() {
+    if (!this.transition && !this.player.playing()) {
+      this.playAudio();
+    }
+  }
+
   private collectResponse(i: number) {
     if (this.transition) {
       return;

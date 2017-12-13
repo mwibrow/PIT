@@ -1,14 +1,20 @@
 
 <div class="page">
 	<div class="tiles">
-		<div *ngFor="let tile of tiles">
+		<div *ngFor="let tile of tiles;">
 			<div *ngIf="tile.active" class="tile tile={{tile.stack}} color-{{tile.color}} {{tile.style}}-{{tile.direction}}">
 				<div  class="tile-inner">
 					<div *ngFor="let imageSrc of tile.imageSrc; let i = index" class="image-wrapper {{transition ? '' : 'hoverable'}}" (click)="collectResponse(i)">
 						<img [src]="getImageSrc(imageSrc)"/>
 					</div>
-        		</div>
+					<div class="replay">
+						<button class="replay-button color-darker-{{tile.color}} {{transition ? '' : 'hoverable'}}" (click)="replay()">
+							<md-icon>replay</md-icon>
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
+
 	</div>
 </div>
